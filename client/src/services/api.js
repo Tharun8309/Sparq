@@ -1,4 +1,7 @@
-const API_BASE = '/api';
+// client/src/services/api.js
+const BACKEND_URL = import.meta.env.VITE_API_URL || '';
+// If VITE_API_URL is "https://sparq-api.vercel.app", it calls "https://sparq-api.vercel.app/api"
+const API_BASE = BACKEND_URL ? `${BACKEND_URL}/api` : '/api';
 
 export async function api(endpoint, options = {}) {
   const { method = 'GET', body, headers = {}, ...customConfig } = options;
@@ -6,12 +9,11 @@ export async function api(endpoint, options = {}) {
   const config = {
     method,
     headers: { ...headers },
-    credentials: 'include',
+    credentials: 'include', // Needed so auth cookies pass to the backend Vercel URL
     ...customConfig
   };
 
   if (body instanceof FormData) {
-    // CRITICAL: Delete any manually inherited Content-Type so the browser sets multipart/form-data with boundary
     delete config.headers['Content-Type'];
     config.body = body;
   } else if (body && typeof body === 'object') {
@@ -21,26 +23,13 @@ export async function api(endpoint, options = {}) {
     config.body = body;
   }
 
-  let res;
-  try {
-    res = await fetch(`${API_BASE}${endpoint}`, config);
-  } catch (networkError) {
-    throw new Error('Connection lost or reset by server. Check server terminal logs.');
-  }
-
-  let data;
-  try {
-    data = await res.json();
-  } catch (parseError) {
-    throw new Error(`Server responded with status ${res.status} (non-JSON response).`);
-  }
+  const res = await fetch(`${API_BASE}${endpoint}`, config);
+  const data = await res.json();
 
   if (!res.ok || data.success === false) {
-    const errorMsg = data?.message || `Request failed with status ${res.status}`;
-    const error = new Error(errorMsg);
-    error.code = data?.code || 'API_ERROR';
-    error.status = res.status;
-    throw error;
+    const err = new Error(data?.message || `Request failed (${res.status})`);
+    err.status = res.status;
+    throw err;
   }
 
   return data;
