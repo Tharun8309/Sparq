@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" role="img" aria-label="Sparq">
+  <rect width="320" height="80" rx="12" fill="#2B060B"/>
+  <text x="24" y="53" font-family="Georgia, serif" font-size="44" font-weight="700" fill="#E5B869">SPARQ</text>
+  <path d="M248 18l5 12 13 1-10 8 3 13-11-7-11 7 3-13-10-8 13-1z" fill="#E5B869"/>
+</svg>

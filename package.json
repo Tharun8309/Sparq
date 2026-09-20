@@ -1,0 +1,16 @@
+{
+  "name": "sparq-fireworks-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build:client": "cd client && npm run build",
+    "seed:all": "cd server && npm run seed:categories && npm run seed:courier && npm run seed:nearby && npm run seed:admin",
+    "test:server": "cd server && npm test"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
