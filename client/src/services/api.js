@@ -1,15 +1,19 @@
 // client/src/services/api.js
-const BACKEND_URL = import.meta.env.VITE_API_URL || '';
-// If VITE_API_URL is "https://sparq-api.vercel.app", it calls "https://sparq-api.vercel.app/api"
+const BACKEND_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
 const API_BASE = BACKEND_URL ? `${BACKEND_URL}/api` : '/api';
 
 export async function api(endpoint, options = {}) {
   const { method = 'GET', body, headers = {}, ...customConfig } = options;
 
+  const token = localStorage.getItem('sparq_admin_token');
+
   const config = {
     method,
-    headers: { ...headers },
-    credentials: 'include', // Needed so auth cookies pass to the backend Vercel URL
+    headers: {
+      ...headers,
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    },
+    credentials: 'include',
     ...customConfig
   };
 

@@ -1,17 +1,26 @@
+// server/middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
 const config = require('../config/env');
 const Admin = require('../models/Admin');
 const { sendError } = require('../utils/apiResponse');
 
-const requireAdmin = async (req, res, next) => {
+async function requireAdminAuth(req, res, next) {
   try {
-    const token = req.cookies?.sparq_admin_token;
+    let token = req.cookies?.token;
+
+    // Check Authorization header if cookie wasn't forwarded
+    const authHeader = req.headers.authorization;
+    if (!token && authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    }
+
     if (!token) {
       return sendError(res, 'Authentication required', 'UNAUTHORIZED', 401);
     }
 
     const decoded = jwt.verify(token, config.jwtSecret);
     const admin = await Admin.findById(decoded.id).select('-passwordHash');
+
     if (!admin) {
       return sendError(res, 'Invalid admin session', 'UNAUTHORIZED', 401);
     }
@@ -21,6 +30,6 @@ const requireAdmin = async (req, res, next) => {
   } catch (err) {
     return sendError(res, 'Session expired or invalid', 'UNAUTHORIZED', 401);
   }
-};
+}
 
-module.exports = { requireAdmin };
+module.exports = { requireAdminAuth };

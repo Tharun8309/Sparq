@@ -32,6 +32,9 @@ export function AdminProvider({ children }) {
       method: 'POST',
       body: { username, password }
     });
+    if (res.data?.token) {
+  localStorage.setItem('sparq_admin_token', res.data.token);
+}
     if (res.success) {
       await checkAuth();
     }
@@ -44,6 +47,7 @@ export function AdminProvider({ children }) {
     } finally {
       setAdmin(null);
     }
+    localStorage.removeItem('sparq_admin_token');
   };
 
   return (

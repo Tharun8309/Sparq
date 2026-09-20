@@ -28,12 +28,13 @@ const login = async (req, res) => {
     });
 
     const isProd = config.nodeEnv === 'production';
-    res.cookie('sparq_admin_token', token, {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: config.cookieSameSite,
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+res.cookie('token', token, {
+  httpOnly: true,
+  secure: isProduction,               // MUST be true in production on Vercel (HTTPS)
+  sameSite: isProduction ? 'none' : 'lax', // MUST be 'none' across separate Vercel domains
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+  path: '/'
+});
 
     return sendSuccess(res, { username: admin.username });
   } catch (err) {
@@ -43,11 +44,12 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   const isProd = config.nodeEnv === 'production';
-  res.clearCookie('sparq_admin_token', {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: config.cookieSameSite
-  });
+res.clearCookie('token', {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? 'none' : 'lax',
+  path: '/'
+});
   return sendSuccess(res, { loggedOut: true });
 };
 
@@ -86,8 +88,14 @@ const changePassword = async (req, res) => {
       sameSite: config.cookieSameSite
     });
 
-    return sendSuccess(res, { message: 'Password changed successfully. Please login again.' });
-  } catch (err) {
+return sendSuccess(res, {
+  admin: {
+    id: admin._id,
+    username: admin.username,
+    role: admin.role
+  },
+  token // <--- Include token in response body
+}, 200, 'Login successful');  } catch (err) {
     return sendError(res, err.message, 'CHANGE_PASSWORD_ERROR', 500);
   }
 };
