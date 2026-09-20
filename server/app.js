@@ -13,7 +13,7 @@ const app = express();
 app.use(helmet());
 
 // CORS configuration for cookies & credentials
-const allowedOrigins = [config.frontendUrl, 'http://localhost:5173', 'http://127.0.0.1:5173'];
+const allowedOrigins = [config.frontendUrl, 'http://localhost:5173', 'http://127.0.0.1:5173','https://spark-client-six.vercel.app','https://spark-client-six.vercel.app/'];
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
