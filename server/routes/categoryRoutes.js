@@ -1,9 +1,9 @@
 const router = require('express').Router();
 const { getCategories, createCategory, deleteCategory } = require('../controllers/categoryController');
-const { requireAdminAuth } = require('../middleware/authMiddleware');
+const { requireAdmin } = require('../middleware/authMiddleware');
 
 router.get('/', getCategories);
-router.post('/', requireAdminAuth, createCategory);
-router.delete('/:id', requireAdminAuth, deleteCategory);
+router.post('/', requireAdmin, createCategory);
+router.delete('/:id', requireAdmin, deleteCategory);
 
 module.exports = router;

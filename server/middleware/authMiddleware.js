@@ -4,7 +4,7 @@ const config = require('../config/env');
 const Admin = require('../models/Admin');
 const { sendError } = require('../utils/apiResponse');
 
-async function requireAdminAuth(req, res, next) {
+async function requireAdmin(req, res, next) {
   try {
     let token = req.cookies?.token;
 
@@ -32,4 +32,4 @@ async function requireAdminAuth(req, res, next) {
   }
 }
 
-module.exports = { requireAdminAuth };
+module.exports = { requireAdmin };
