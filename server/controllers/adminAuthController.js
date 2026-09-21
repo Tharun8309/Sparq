@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
 const config = require('../config/env');
 const { sendSuccess, sendError } = require('../utils/apiResponse');
+const isProduction = process.env.NODE_ENV === 'production';
 
 const login = async (req, res) => {
   try {
